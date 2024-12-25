@@ -1,8 +1,10 @@
 # TODO
 # - Authentication
-# OAuth e JWT
+# OAuth
 # - Address
 # - Filters
+# - Cronjobs
+# -
 
 
 from datetime import timedelta
@@ -39,24 +41,42 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
-    "drf_yasg",
+    "drf_spectacular",
     "events",
     "users",
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Event Manager",
+    "DESCRIPTION": "Event Manager API built with Django REST",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=int(env("JWT_ACCESS_LIFETIME_MIN"))),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(
+        days=int(env("JWT_REFRESH_LIFETIME_DAYS"))
+    ),
     "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
     "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(days=1),
     "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(days=30),
+    "SIGNING_KEY": env("JWT_SECRET_KEY"),
+}
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    },
+    "USE_SESSION_AUTH": False,
 }
 
 AUTH_USER_MODEL = "users.User"

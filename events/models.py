@@ -20,7 +20,7 @@ class Event(BaseModel):
     max_attendants = PositiveIntegerField()
     location = CharField(max_length=200)  # could be address relation
 
-    attendants = ManyToManyField(User, related_name='attended_events') 
+    attendants = ManyToManyField(User, related_name='attended_events', blank=True) 
     organizer = ForeignKey(User, on_delete=PROTECT, related_name='organized_events')
 
     class Meta:
