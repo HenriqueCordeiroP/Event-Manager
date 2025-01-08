@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "events",
     "users",
+    "tickets",
+    "commerce"
 ]
 
 REST_FRAMEWORK = {
