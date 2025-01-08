@@ -6,6 +6,8 @@ from events.models import Event
 from events.serializers import EventSerializer
 from events.permissions import IsEventCreator
 
+# TODO show attendats only for organizer
+# TODO return prices
 @extend_schema(tags=["Events"])
 class EventsViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by("start_datetime")

@@ -2,7 +2,7 @@ compose-build:
 	docker compose build
 
 compose-up:
-	docker compose build -d
+	docker compose up -d
 
 migrations:
 	python manage.py makemigrations
@@ -12,6 +12,3 @@ migrate:
 
 run:
 	python manage.py runserver
-
-env:
-	source env/bin/activate
