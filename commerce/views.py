@@ -43,13 +43,11 @@ class OrderRequestView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        data = serializer.data
-
-        price = data.price
         accountable_user = request.user
-        users = data.users
+        price = serializer.validated_data.get("price")
+        users = serializer.validated_data.get("users")
 
-        price_uses = Ticket.objects.filter(price=price).count()
+        price_uses = Ticket.objects.filter(price=price).exclude(status=Ticket.Status.CANCELLED).count()
 
         if price.max_uses and price_uses >= price.max_uses:
             return Response(
@@ -57,7 +55,7 @@ class OrderRequestView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if price.max_uses and price_uses + len(users) >= price.max_uses:
+        if price.max_uses and price_uses + len(users) > price.max_uses:
             return Response(
                 {
                     "price": "There are not enough available items of this price for the requested amount of users"
@@ -76,8 +74,8 @@ class OrderRequestView(APIView):
             )
 
             for user in users:
-                Ticket.objets.create(
-                    user=user, event=price.event, order=order, price=price
+                Ticket.objects.create(
+                    user=user, event=price.event, order=order, price=price, status=Ticket.Status.CONFIRMED
                 )
 
             return Response(
@@ -85,13 +83,19 @@ class OrderRequestView(APIView):
                 status=status.HTTP_201_CREATED,
             )
         else:
+
+           # TODO calculate price with coupon
             order = Order.objects.create(
                 user=accountable_user, status=Order.Status.PROCESSING, total=price.amount
             )
             
-            # TODO create payment via webhook and tickets upon payment // third party gatway e.g. Stripe
+            # TODO create payment via webhook and confirm tickets upon payment // third party gatway e.g. Stripe
+            for user in users:
+                Ticket.objects.create(
+                    user=user, event=price.event, order=order, price=price, status=Ticket.Status.PENDING
+                )
 
             return Response(
-                {"payment pending": "Tickets will be created upon payment"},
+                {"payment pending": "Tickets will be assigned upon payment"},
                 status=status.HTTP_202_ACCEPTED,
             )

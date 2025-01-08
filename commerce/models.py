@@ -48,7 +48,7 @@ class Price(BaseModel):
     amount = IntegerField()
     event = ForeignKey(Event, on_delete=PROTECT)
     expiry = DateTimeField(null=True)
-    max_uses = IntegerField(null=True)
+    max_uses = IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "prices"

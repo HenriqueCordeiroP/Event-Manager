@@ -3,6 +3,7 @@ from rest_framework.serializers import (
     PrimaryKeyRelatedField,
     CharField,
     IntegerField,
+    ValidationError
 )
 from django.utils import timezone
 
@@ -12,7 +13,7 @@ from commerce.models import Price, Coupon
 
 class OrderRequestSerializer(Serializer):
     price = PrimaryKeyRelatedField(
-        queryset=Price.objects.filter(expiry__gte=timezone.now()),
+        queryset=Price.objects.all(),
         many=False,
         error_messages={
             "does_not_exist": "Price not found.",
@@ -38,3 +39,11 @@ class OrderRequestSerializer(Serializer):
         },
     )
     installments = IntegerField(default=1, required=False)
+
+    def validate_price(self, price):
+        if price.expiry <= timezone.now():
+           raise ValidationError(
+                "This price is no longer available."
+            )
+        
+        return price
