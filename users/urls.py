@@ -5,6 +5,6 @@ from users.views import UsersReadonlyViewSet
 app_name = 'users'
 
 router = DefaultRouter()
-router.register(r'', UsersReadonlyViewSet,)
+router.register(r'', UsersReadonlyViewSet)
 
 urlpatterns = router.urls

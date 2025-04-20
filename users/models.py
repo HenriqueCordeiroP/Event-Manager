@@ -1,4 +1,4 @@
-from django.db.models import CharField, EmailField, BooleanField
+from django.db.models import CharField, EmailField, BooleanField, DateField
 from django.contrib.auth.models import AbstractBaseUser,  PermissionsMixin  
 
 from shared.models import BaseModel
@@ -38,6 +38,7 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     name = CharField(max_length=200)
     email = EmailField(unique=True, max_length=200)
     password = CharField(max_length=100)
+    date_of_birth = DateField()
 
     is_staff = BooleanField(default=False)
     is_active = BooleanField(default=True)

@@ -15,7 +15,6 @@ class EventSerializer(serializers.ModelSerializer):
             "end_datetime",
             "max_attendants",
             "location",
-            "attendants",
             "organizer",
         ]
 

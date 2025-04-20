@@ -3,12 +3,24 @@ from django.db.models import (
     DateTimeField,
     PositiveIntegerField,
     ManyToManyField,
-    ForeignKey, PROTECT
+    ForeignKey, PROTECT, CASCADE
 )
 
 from shared.models import BaseModel
 from users.models import User
 
+
+class Location(BaseModel):
+    street_name = CharField(max_length=200)
+    street_number = CharField(max_length=10)
+    neighborhood = CharField(max_length=100)
+    city = CharField(max_length=100)
+    state = CharField(max_length=100)
+    country = CharField(max_length=100)
+    postal_code = CharField(max_length=20)
+
+    class Meta:
+        db_table = "locations"
 
 class Event(BaseModel):
     name = CharField(max_length=80)
@@ -18,9 +30,8 @@ class Event(BaseModel):
     start_datetime = DateTimeField()
     end_datetime = DateTimeField(null=True)
     max_attendants = PositiveIntegerField()
-    location = CharField(max_length=200)  # could be address relation
+    location = ForeignKey(Location, on_delete=CASCADE)
 
-    attendants = ManyToManyField(User, related_name='attended_events', blank=True) 
     organizer = ForeignKey(User, on_delete=PROTECT, related_name='organized_events')
 
     class Meta:

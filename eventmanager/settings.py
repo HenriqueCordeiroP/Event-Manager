@@ -7,6 +7,9 @@
 # -
 
 
+# Tickets -> owner, forwarded_from, event
+
+
 from datetime import timedelta
 from pathlib import Path
 
